@@ -31,12 +31,16 @@ import {VRFV2PlusClient} from "@chainlink/contracts/src/v0.8/vrf/dev/libraries/V
  * @notice This contract is for creating a sample raffle
  * @dev Implements Chainlink VRFv2.5
  */
-abstract contract Raffle is VRFConsumerBaseV2Plus {
+contract Raffle is VRFConsumerBaseV2Plus {
     /* Errors */
     error Raffle__SendMoreToEnterRaffle();
     error Raffle__TransferFailed();
     error Raffle__RaffleNotOpen();
-    error Raffle__UpkeepNotNeeded(uint256 balance, uint256 playersLength, uint256 raffleState);
+    error Raffle__UpkeepNotNeeded(
+        uint256 balance,
+        uint256 playersLength,
+        uint256 raffleState
+    );
 
     /* Type Declarations */
     enum RaffleState {
@@ -125,7 +129,11 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
         // check to see if enough time has passed
         (bool upkeepNeeded, ) = checkUpkeep("");
         if (!upkeepNeeded) {
-            revert Raffle__UpkeepNotNeeded(address(this).balance, sPlayers.length, uint256(sRaffleState));
+            revert Raffle__UpkeepNotNeeded(
+                address(this).balance,
+                sPlayers.length,
+                uint256(sRaffleState)
+            );
         }
 
         sRaffleState = RaffleState.CALCULATING;
@@ -147,7 +155,7 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
 
     // CEI: Checks, Effects, Interactions pattern
     function fulfillRandomWords(
-        uint256, /*requestId*/
+        uint256 /*requestId*/,
         uint256[] calldata randomWords
     ) internal override {
         // Checks
@@ -172,5 +180,9 @@ abstract contract Raffle is VRFConsumerBaseV2Plus {
      */
     function getEntranceFee() external view returns (uint256) {
         return I_ENTRANCE_FEE;
+    }
+
+    function getRaffleState() external view returns (RaffleState) {
+        return sRaffleState;
     }
 }
