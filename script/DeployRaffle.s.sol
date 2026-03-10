@@ -6,6 +6,8 @@ import {Raffle} from "../src/Raffle.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
 import {CreateSubscription} from "./Interactions.s.sol";
 
+// forge script script/Interactions.s.sol:FundSubscription --rpc-url $SEPOLIA_RPC_URL --account myaccount --broadcast
+
 contract DeployRaffle is Script {
   function run() public {
 
