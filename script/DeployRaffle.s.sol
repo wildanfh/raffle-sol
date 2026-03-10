@@ -4,13 +4,13 @@ pragma solidity ^0.8.19;
 import {Script} from "forge-std/Script.sol";
 import {Raffle} from "../src/Raffle.sol";
 import {HelperConfig} from "./HelperConfig.s.sol";
-import {CreateSubscription} from "./Interactions.s.sol";
+import {CreateSubscription, FundSubscription, AddConsumer} from "./Interactions.s.sol";
 
 // forge script script/Interactions.s.sol:FundSubscription --rpc-url $SEPOLIA_RPC_URL --account myaccount --broadcast
 
 contract DeployRaffle is Script {
   function run() public {
-
+    deployContract();
   }
 
   function deployContract() public returns(Raffle, HelperConfig) {
@@ -23,6 +23,10 @@ contract DeployRaffle is Script {
       // create subscription
       CreateSubscription createSubscription = new CreateSubscription();
       (config.subscriptionId, config.vrfCoordinator) = createSubscription.createSubscription(config.vrfCoordinator);
+
+      // Fund it!
+      FundSubscription fundSubscription = new FundSubscription();
+      fundSubscription.fundSubscription(config.vrfCoordinator, config.subscriptionId, config.link);
     }
 
     vm.startBroadcast();
@@ -35,6 +39,10 @@ contract DeployRaffle is Script {
       config.callbackGasLimit
     );
     vm.stopBroadcast();
+
+    AddConsumer addConsumer = new AddConsumer();
+    // don't need to broadcast..
+    addConsumer.addConsumer(address(raffle), config.vrfCoordinator, config.subscriptionId);
     return (raffle, helperConfig);
   }
 }

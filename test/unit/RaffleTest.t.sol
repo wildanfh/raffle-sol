@@ -71,6 +71,7 @@ contract RaffleTest is Test {
 
     function testDontAllowPlayersToEnterWhenRaffleIsCalculating() public {
         // Arrange
+        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
         vm.prank(PLAYER);
         raffle.enterRaffle{value: entranceFee}();
         // Act
