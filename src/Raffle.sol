@@ -65,6 +65,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
     /* Events */
     event RaffleEntered(address indexed player);
     event PickedWinner(address indexed winner);
+    event RequestRaffleWinner(uint256 indexed requestId);
 
     // What data structure should we use? How to keep track of all players?
     constructor(
@@ -150,7 +151,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
                     VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
                 )
             });
-        s_vrfCoordinator.requestRandomWords(request);
+        uint256 requestId = s_vrfCoordinator.requestRandomWords(request);
+
+        emit RequestRaffleWinner(requestId);
     }
 
     // CEI: Checks, Effects, Interactions pattern
