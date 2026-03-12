@@ -10,7 +10,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import {Test, console} from "forge-std/Test.sol";
+import {Test} from "forge-std/Test.sol";
 import {CreateSubscription, FundSubscription, AddConsumer} from "../../script/Interactions.s.sol";
 import {HelperConfig} from "script/HelperConfig.s.sol";
 import {VRFCoordinatorV2_5Mock} from "@chainlink/contracts/src/v0.8/vrf/mocks/VRFCoordinatorV2_5Mock.sol";
@@ -28,7 +28,7 @@ contract InteractionsTest is Test {
     uint256 interval;
     uint256 subscriptionId;
 
-    address public PLAYER = makeAddr("player");
+    address public player = makeAddr("player");
     uint256 public constant STARTING_USER_BALANCE = 10 ether;
 
     function setUp() external {
@@ -43,7 +43,7 @@ contract InteractionsTest is Test {
         interval = config.interval;
         subscriptionId = config.subscriptionId;
 
-        vm.deal(PLAYER, STARTING_USER_BALANCE);
+        vm.deal(player, STARTING_USER_BALANCE);
     }
 
     // Unit
@@ -118,7 +118,7 @@ contract InteractionsTest is Test {
     // Integration
     function testUserCanEnterAndUpkeepWorksBecauseOfInteractions() public {
         // Arrange
-        vm.prank(PLAYER);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
 
         vm.warp(block.timestamp + interval + 1);

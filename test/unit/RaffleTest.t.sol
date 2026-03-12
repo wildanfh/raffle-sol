@@ -13,7 +13,7 @@ contract RaffleTest is CodeConstants, Test {
     Raffle public raffle;
     HelperConfig public helperConfig;
 
-    address public PLAYER = makeAddr("player");
+    address public player = makeAddr("player");
     uint256 public constant STARTING_PLAYER_BALANCE = 10 ether;
 
     uint256 entranceFee;
@@ -44,7 +44,7 @@ contract RaffleTest is CodeConstants, Test {
 
     function testRaffleRevertsWhenYouDontPayEnough() public {
         // Arrange
-        vm.prank(PLAYER);
+        vm.prank(player);
         // Act / Assert
         vm.expectRevert(Raffle.Raffle__SendMoreToEnterRaffle.selector);
         raffle.enterRaffle();
@@ -52,30 +52,30 @@ contract RaffleTest is CodeConstants, Test {
 
     function testRaffleRecordsPlayerWhenTheyEnter() public {
         // Arrange
-        vm.prank(PLAYER);
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
         // Act
         raffle.enterRaffle{value: entranceFee}();
         // Assert
         address playerRecorded = raffle.getPlayer(0);
-        assert(playerRecorded == PLAYER);
+        assert(playerRecorded == player);
     }
 
     function testEnteringRaffleEmitsEvent() public {
         // Arrange
-        vm.prank(PLAYER);
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
         // Assert
         vm.expectEmit(true, false, false, false, address(raffle));
-        emit RaffleEntered(PLAYER);
+        emit RaffleEntered(player);
         // Act
         raffle.enterRaffle{value: entranceFee}();
     }
 
     function testDontAllowPlayersToEnterWhenRaffleIsCalculating() public {
         // Arrange
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
         // Act
         vm.warp(block.timestamp + interval + 1);
@@ -83,7 +83,7 @@ contract RaffleTest is CodeConstants, Test {
         raffle.performUpkeep("");
         // Assert
         vm.expectRevert(Raffle.Raffle__RaffleNotOpen.selector);
-        vm.prank(PLAYER);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
     }
 
@@ -100,8 +100,8 @@ contract RaffleTest is CodeConstants, Test {
 
     function testCheckUpkeepReturnsFalseIfRaffleNotOpen() public {
         // Arrange
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
@@ -114,8 +114,8 @@ contract RaffleTest is CodeConstants, Test {
 
     function testCheckUpkeepReturnsFalseIfEnoughTimeHasntPassed() public {
         // Arrange
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
 
         // Act
@@ -127,8 +127,8 @@ contract RaffleTest is CodeConstants, Test {
 
     function testCheckUpkeepReturnsTrueWhenParametersGood() public {
         // Arrange
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
@@ -143,8 +143,8 @@ contract RaffleTest is CodeConstants, Test {
     // PERFORM UPKEEP
     function testPerformUpkeepCanOnlyRunIfCheckUpkeepIsTrue() public {
         // Arrange
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
@@ -159,8 +159,8 @@ contract RaffleTest is CodeConstants, Test {
         uint256 numPlayers = 0;
         Raffle.RaffleState rState = raffle.getRaffleState();
 
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
         currentBalance = currentBalance + entranceFee;
         numPlayers = 1;
@@ -178,8 +178,8 @@ contract RaffleTest is CodeConstants, Test {
     }
 
     modifier raffleEntered() {
-        vm.deal(PLAYER, STARTING_PLAYER_BALANCE);
-        vm.prank(PLAYER);
+        vm.deal(player, STARTING_PLAYER_BALANCE);
+        vm.prank(player);
         raffle.enterRaffle{value: entranceFee}();
         vm.warp(block.timestamp + interval + 1);
         vm.roll(block.number + 1);
@@ -221,6 +221,7 @@ contract RaffleTest is CodeConstants, Test {
         address expectedWinner = address(1);
         
         for (uint256 i = startingIndex; i < startingIndex + additionalEntrants; i++) {
+            // forge-lint: disable-next-line(unsafe-typecast)
             address newPlayer = address(uint160(i));
             hoax(newPlayer, 1 ether);
             raffle.enterRaffle{value: entranceFee}();

@@ -7,10 +7,10 @@ import {LinkToken} from "../test/mocks/LinkToken.sol";
 
 abstract contract CodeConstants {
     /* VRF Mock Values */
-    uint96 public MOCK_BASE_FEE = 0.25 ether;
-    uint96 public MOCK_GAS_PRICE_LINK = 1e9; // 0.000000001 LINK per gas
+    uint96 public mockBaseFee = 0.25 ether;
+    uint96 public mockGasPriceLink = 1e9; // 0.000000001 LINK per gas
     // LINK / ETH price
-    int256 public MOCK_WEI_PER_UNIT_LINK = 4e15; // 0.004 ETH per LINK
+    int256 public mockWeiPerUnitLink = 4e15; // 0.004 ETH per LINK
     uint256 public constant ETH_SEPOLIA_CHAIN_ID = 11155111;
     uint256 public constant LOCAL_CHAIN_ID = 31337;
     address public constant FOUNDRY_DEFAULT_SENDER =
@@ -78,9 +78,9 @@ contract HelperConfig is CodeConstants, Script {
         // Deploy mocks und such
         vm.startBroadcast();
         VRFCoordinatorV2_5Mock vrfCoordinator = new VRFCoordinatorV2_5Mock(
-            MOCK_BASE_FEE,
-            MOCK_GAS_PRICE_LINK,
-            MOCK_WEI_PER_UNIT_LINK
+            mockBaseFee,
+            mockGasPriceLink,
+            mockWeiPerUnitLink
         );
         LinkToken linkToken = new LinkToken();
         vm.stopBroadcast();
