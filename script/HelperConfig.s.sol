@@ -13,6 +13,8 @@ abstract contract CodeConstants {
     int256 public MOCK_WEI_PER_UNIT_LINK = 4e15; // 0.004 ETH per LINK
     uint256 public constant ETH_SEPOLIA_CHAIN_ID = 11155111;
     uint256 public constant LOCAL_CHAIN_ID = 31337;
+    address public constant FOUNDRY_DEFAULT_SENDER =
+        0x1804c8AB1F12E6bbf3894d4083f33e07309d1f38;
 }
 
 contract HelperConfig is CodeConstants, Script {
@@ -27,6 +29,7 @@ contract HelperConfig is CodeConstants, Script {
         uint256 subscriptionId;
         uint32 callbackGasLimit;
         address link;
+        address account;
     }
 
     NetworkConfig public localNetworkConfig;
@@ -61,8 +64,8 @@ contract HelperConfig is CodeConstants, Script {
                 entranceFee: 0.01 ether,
                 callbackGasLimit: 500000, // 500,000 gas
                 vrfCoordinator: 0x9DdfaCa8183c41ad55329BdeeD9F6A8d53168B1B,
-                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789
-                // account: 0x643315C9Be056cDEA171F4e7b2222a4ddaB9F88D
+                link: 0x779877A7B0D9E8603169DdbD7836e478b4624789,
+                account: 0xC7e40aa62693Cf20A317207372337044F1EC0bF0
             });
     }
 
@@ -89,7 +92,8 @@ contract HelperConfig is CodeConstants, Script {
             gasLane: 0x787d74caea10b2b357790d5b5247c2f63d1d91572a9846f780606e4d953677ae,
             callbackGasLimit: 500000, // 500,000 gas
             vrfCoordinator: address(vrfCoordinator),
-            link: address(linkToken)
+            link: address(linkToken),
+            account: FOUNDRY_DEFAULT_SENDER
         });
         return localNetworkConfig;
     }
